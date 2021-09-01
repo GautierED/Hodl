@@ -8,7 +8,7 @@ const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(API_URL);
 
 const contract = require("../artifacts/contracts/Hodl.sol/Hodl.json");
-const contractAddress = "0x8E7431F40Fa30b4A0303Baad102C78309016Fcc4";
+const contractAddress = "0xB0899a76ade00dF7a548622a427Be9686b89A0d3";
 const hodlContract = new web3.eth.Contract(contract.abi, contractAddress);
 
 async function deposit() {
@@ -56,8 +56,8 @@ const getCircularReplacer = () => {
 
 async function main() {
     
-    const message = await hodlContract.methods.showBlance.call();
-    console.log(JSON.stringify(message, getCircularReplacer()));
+    const message = await hodlContract.methods.balance().call();
+    console.log(message);
 
     //await deposit();
     

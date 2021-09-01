@@ -3,8 +3,8 @@ pragma solidity ^0.8.4;
 contract Hodl {
     
     
-    address owner;
-    uint balance;
+    address public owner;
+    uint public balance;
     
     modifier isOwner {
         require(msg.sender == owner);
@@ -23,10 +23,5 @@ contract Hodl {
     function withdraw() isOwner public {
         payable(msg.sender).transfer(balance);
     }
-    
-    function showBlance() public returns(uint) {
-        return (balance);
-    }
-
     
 }
