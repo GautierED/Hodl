@@ -10,6 +10,9 @@ contract Hodl {
     uint public balance;
     uint public timeOfUnlock;
     
+    event fundsWithdrawn(uint balance, uint time);
+    event fundsDeposited(uint amount, uint time);
+    
     modifier isOwner {
         require(msg.sender == owner);
         _;
@@ -20,13 +23,13 @@ contract Hodl {
         _;
     }
     
-    modifier isTimeOfDepositOK {
+    modifier isTimeToDeposit {
         require(block.timestamp < timeOfUnlock);
         _;
     }
     
-    modifier isTimeOfWithdrawOK {
-        require(block.timestamp > timeOfUnlock);
+    modifier isTimeToWithdraw {
+        require((block.timestamp > timeOfUnlock) && (timeOfUnlock != 0));
         _;
     }
     
@@ -38,13 +41,16 @@ contract Hodl {
         timeOfUnlock = block.timestamp + time;
     }
     
-    function deposit() isOwner isTimeOfDepositOK external payable {
+    function deposit() isOwner isTimeToDeposit external payable {
         balance += msg.value;
+        emit fundsDeposited(msg.value, block.timestamp);
     }
     
-    function withdraw() isOwner isTimeOfWithdrawOK public {
+    function withdraw() isOwner isTimeToWithdraw public {
         payable(msg.sender).transfer(balance);
+        emit fundsWithdrawn(balance, block.timestamp);
         balance = 0;
+        timeOfUnlock = 0;
     }
     
 }
