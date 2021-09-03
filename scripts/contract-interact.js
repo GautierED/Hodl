@@ -40,7 +40,7 @@ async function withdraw() {
     await signTransaction(tx);
 }
 
-async function setTimeOfUnlock(time) {
+async function setTimeOfLock(time) {
    const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest'); // get latest nonce
    const gasEstimate = await hodlContract.methods.deposit().estimateGas();
    const tx = {
@@ -83,7 +83,7 @@ async function main() {
     //const receipt = await hodlContract.methods.emitEvent();
     //console.log(receipt.receipt);
 
-    await setTimeOfUnlock("6000");
+    await setTimeOfLock("6000");
 
     //const message = await hodlContract.methods.timeOfUnlock().call();
     //console.log("Your time of lock is : " + message);

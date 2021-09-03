@@ -21,7 +21,11 @@ async function deposit(amount) {
         'value': web3.utils.toHex(web3.utils.toWei(amount, "ether"))
       };
 
-    await signTheTransaction(tx); 
+      await signTheTransaction(tx); 
+      const latestBlockNumber = await web3.eth.getBlockNumber();
+      //block = await web3.eth.getTransactionReceipt(transaction);
+      const results = await hodlContract.getPastEvents('fundsDeposited', {fromBlock: latestBlockNumber - 4000});
+      console.log(results);
 }
 
 async function withdraw() {
@@ -32,10 +36,11 @@ async function withdraw() {
       'data': hodlContract.methods.withdraw().encodeABI()
     };
 
-  await signTheTransaction(tx); 
+    await signTheTransaction(tx); 
+    
 }
 
-async function setTimeOfUnlock(time) {
+async function setTimeOfLock(time) {
     const tx = {
       'from': PUBLIC_KEY,
       'to': contractAddress,
@@ -43,7 +48,7 @@ async function setTimeOfUnlock(time) {
       'data': hodlContract.methods.setTimeOfLock(time).encodeABI()
     };
 
-   await signTheTransaction(tx); 
+    await signTheTransaction(tx); 
 }
 
 async function signTheTransaction(tx) {
@@ -63,14 +68,14 @@ async function signTheTransaction(tx) {
 
 async function main() {
     
-    await withdraw();
+    //await withdraw();
 
     //const message = await hodlContract.methods.balance().call();
     //console.log("Your balance is : " + message + " wei / " + (message/(10 ** 18)) + " ethereum");
 
-    //await deposit("0.1");
+    await deposit("0.1");
 
-    //await setTimeOfUnlock("600");
+    //await setTimeOfLock("3600");
 
     //const message = await hodlContract.methods.timeOfUnlock().call();
     //console.log("Your time of lock is : " + message);
