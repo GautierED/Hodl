@@ -8,81 +8,54 @@ const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(API_URL);
 
 const contract = require("../artifacts/contracts/Hodl.sol/Hodl.json");
-const contractAddress = "0x60b1cCEbC21191a97Da13Cca526819B90691eF90";
+const contractAddress = "0x905c9Be321Ecd39550Cb9Af36974e67dAE9D971C";
 const hodlContract = new web3.eth.Contract(contract.abi, contractAddress);
 
 async function deposit(amount) {
+     const gasEstimate = await hodlContract.methods.withdraw().estimateGas();
      const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest'); 
-
-     // Create the transaction
      const tx = {
         'from': PUBLIC_KEY,
         'to': contractAddress,
         'nonce': nonce,
-        'gas': 8000000, 
+        'gas': gasEstimate, 
         'maxFeePerGas': 8000000000,
         'data': hodlContract.methods.deposit().encodeABI(),
         'value': web3.utils.toHex(web3.utils.toWei(amount, "ether"))
       };
-
-    // Sign the transaction
-    const signPromise = web3.eth.accounts.signTransaction(tx, PRIVATE_KEY);
-    signPromise.then((signedTx) => {
-      web3.eth.sendSignedTransaction(signedTx.rawTransaction, function(err, hash) {
-        if (!err) {
-          console.log("The hash of your transaction is: ", hash, "\n Check Alchemy's Mempool to view the status of your transaction!");
-        } else {
-          console.log("Something went wrong when submitting your transaction:", err)
-        }
-      });
-    }).catch((err) => {
-      console.log("Promise failed:", err);
-    });
+      await signTransaction(tx);
 }
 
 async function withdraw() {
-  const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest'); // get latest nonce
-  //const gasEstimate = await hodlContract.methods.deposit().estimateGas();
-
-   // Create the transaction
+   const gasEstimate = await hodlContract.methods.withdraw().estimateGas();
+   const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest'); 
    const tx = {
       'from': PUBLIC_KEY,
       'to': contractAddress,
       'nonce': nonce,
-      'gas': 8000000, 
+      'gas': gasEstimate, 
       'maxFeePerGas': 80000000000,
       'data': hodlContract.methods.withdraw().encodeABI()
     };
-
-  // Sign the transaction
-  const signPromise = web3.eth.accounts.signTransaction(tx, PRIVATE_KEY);
-  signPromise.then((signedTx) => {
-    web3.eth.sendSignedTransaction(signedTx.rawTransaction, function(err, hash) {
-      if (!err) {
-        console.log("The hash of your transaction is: ", hash, "\n Check Alchemy's Mempool to view the status of your transaction!");
-      } else {
-        console.log("Something went wrong when submitting your transaction:", err)
-      }
-    });
-  }).catch((err) => {
-    console.log("Promise failed:", err);
-  });
+    await signTransaction(tx);
 }
 
 async function setTimeOfUnlock(time) {
-  const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest'); // get latest nonce
-  //const gasEstimate = await hodlContract.methods.deposit().estimateGas();
-
-   // Create the transaction
+   const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest'); // get latest nonce
+   const gasEstimate = await hodlContract.methods.deposit().estimateGas();
    const tx = {
       'from': PUBLIC_KEY,
       'to': contractAddress,
       'nonce': nonce,
-      'gas': 8000000, 
+      'gas': gasEstimate, 
       'maxFeePerGas': 80000000000,
       'data': hodlContract.methods.setTimeOfLock(time).encodeABI()
     };
 
+  await signTransaction(tx);
+}
+
+async function signTransaction(tx) {
   // Sign the transaction
   const signPromise = web3.eth.accounts.signTransaction(tx, PRIVATE_KEY);
   signPromise.then((signedTx) => {
@@ -98,21 +71,26 @@ async function setTimeOfUnlock(time) {
   });
 }
 
-
 async function main() {
     
-    await withdraw();
+    //await withdraw();
+    //await hodlContract.events.fundsWithdrawn;
 
     //const message = await hodlContract.methods.balance().call();
     //console.log("Your balance is : " + message + " wei / " + (message/(10 ** 18)) + " ethereum");
 
     //await deposit("1");
+    //const receipt = await hodlContract.methods.emitEvent();
+    //console.log(receipt.receipt);
 
-    //await setTimeOfUnlock("600");
+    await setTimeOfUnlock("6000");
 
     //const message = await hodlContract.methods.timeOfUnlock().call();
     //console.log("Your time of lock is : " + message);
-    
+
+
+    //const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest'); // get latest nonce
+    //console.log(nonce);
 }
 
 main();

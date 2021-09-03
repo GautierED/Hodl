@@ -1,3 +1,4 @@
 - add a UI using metamask
 - let you use the bsc
 - let you lock erc20 token
+- optimize js file
