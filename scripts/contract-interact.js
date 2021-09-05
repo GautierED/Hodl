@@ -41,7 +41,7 @@ async function withdraw() {
 }
 
 async function setTimeOfLock(time) {
-   const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest'); // get latest nonce
+   const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest'); 
    const gasEstimate = await hodlContract.methods.deposit().estimateGas();
    const tx = {
       'from': PUBLIC_KEY,
@@ -51,12 +51,10 @@ async function setTimeOfLock(time) {
       'maxFeePerGas': 80000000000,
       'data': hodlContract.methods.setTimeOfLock(time).encodeABI()
     };
-
-  await signTransaction(tx);
+    await signTransaction(tx);
 }
 
 async function signTransaction(tx) {
-  // Sign the transaction
   const signPromise = web3.eth.accounts.signTransaction(tx, PRIVATE_KEY);
   signPromise.then((signedTx) => {
     web3.eth.sendSignedTransaction(signedTx.rawTransaction, function(err, hash) {
