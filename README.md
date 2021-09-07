@@ -1,4 +1,4 @@
 # Hodl
-dApp that let you lock an amount of Eth for a period of time using your Metamask wallet
+dApp that let you lock an amount of token for a period of time using your Metamask wallet
 
-Ropsten network / Hardhat / Ether.js / Alchemy API
+Solidity / React / Hardhat / Web3 / Ethers / Metamask / Ethereum / Binance Smart Chain 
