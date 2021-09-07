@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import getWallet from './metamask.js';
+var ethers = require('ethers');
 
 function App() {
   const [hodl, setHodl] = useState(undefined);
@@ -26,14 +27,26 @@ function App() {
 
   const getTimeOfUnlock = async e => {
     e.preventDefault();
-    const balance = await hodl.timeOfUnlock();
-    setBalance(balance);
+    const time = await hodl.timeOfUnlock();
+    setTimeOfUnlock(time);
   };
 
   const setTimeOfLock = async e => {
     e.preventDefault();
     const time = e.target.elements[0].value;
     const tx = await hodl.setTimeOfLock(time);
+    await tx.wait();
+  };
+
+  const deposit = async e => {
+    e.preventDefault();
+    const amount = e.target.elements[0].value;
+
+    let overrides = {
+      value: ethers.utils.parseEther(String(amount))
+    }
+
+    const tx = await hodl.deposit(overrides);
     await tx.wait();
   };
 
@@ -49,19 +62,18 @@ function App() {
       <div className='row'>
 
         <div className='col-sm-6'>
-          <h2>Balance :</h2>
-          <p>{balance.toString()}</p>
+          <h2>Token locked :</h2>
+          <p>{(balance/(10 ** 18)).toString() + " BNB"}</p>
         </div>
 
         <div className='col-sm-6'>
-          <h2>Get balance</h2>
           <form className="form-inline" onSubmit={e => getBalance(e)}>
             
             <button 
               type="submit" 
               className="btn btn-primary"
             >
-              Submit
+              Refresh
             </button>
           </form>
         </div>
@@ -72,13 +84,12 @@ function App() {
         </div>
 
         <div className='col-sm-6'>
-          <h2>Get time of unlock</h2>
           <form className="form-inline" onSubmit={e => getTimeOfUnlock(e)}>
           <button 
               type="submit" 
               className="btn btn-primary"
             >
-              Submit
+              Refresh
             </button>
           </form>
           </div>
@@ -90,6 +101,23 @@ function App() {
               type="text" 
               className="form-control" 
               placeholder="Time of lock"
+            />
+            <button 
+              type="submit" 
+              className="btn btn-primary"
+            >
+              Submit
+            </button>
+          </form>
+        </div>
+
+        <div className='col-sm-6'>
+          <h2>Deposit</h2>
+          <form className="form-inline" onSubmit={e => deposit(e)}>
+            <input 
+              type="text" 
+              className="form-control" 
+              placeholder="Amount"
             />
             <button 
               type="submit" 
