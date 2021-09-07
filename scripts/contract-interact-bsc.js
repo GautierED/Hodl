@@ -72,19 +72,19 @@ async function getEvent(hash, event) {
 
 async function main() {
     
-    await withdraw();
+  await withdraw();
 
-    //const message = await hodlContract.methods.balance().call();
-    //console.log("Your balance is : " + message + " wei / " + (message/(10 ** 18)) + " bnb");
+  //const message = await hodlContract.methods.balance().call();
+  //console.log("Your balance is : " + message + " wei / " + (message/(10 ** 18)) + " bnb");
 
-    //await deposit("0.01");
+  //await deposit("0.01");
 
-    //await setTimeOfLock("3600");
+  //await setTimeOfLock("3600");
 
-    //const message = await hodlContract.methods.timeOfUnlock().call();
-    //console.log("Your time of lock is : " + message);
+  //const message = await hodlContract.methods.timeOfUnlock().call();
+  //console.log("Your time of lock is : " + message);
 
-    //getEvent('0x486ecffa7e78b78b5414843258a0ed1d68465fd9fbb2d89c0b2daa8bf6ed1d39', 'fundsDeposited');
+  //getEvent('0x486ecffa7e78b78b5414843258a0ed1d68465fd9fbb2d89c0b2daa8bf6ed1d39', 'fundsDeposited');
 }
 
 main();

@@ -8,87 +8,95 @@ const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(API_URL);
 
 const contract = require("../artifacts/contracts/Hodl.sol/Hodl.json");
-const contractAddress = "0x905c9Be321Ecd39550Cb9Af36974e67dAE9D971C";
+const contractAddress = "0x39307A8373c36cB87F547BBed1BD1ADB4280eC8B";
 const hodlContract = new web3.eth.Contract(contract.abi, contractAddress);
 
 async function deposit(amount) {
-     const gasEstimate = await hodlContract.methods.withdraw().estimateGas();
      const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest'); 
+     //const gasEstimate = await hodlContract.methods.withdraw().estimateGas();
      const tx = {
         'from': PUBLIC_KEY,
         'to': contractAddress,
         'nonce': nonce,
-        'gas': gasEstimate, 
+        'gas': 8000000, 
         'maxFeePerGas': 8000000000,
         'data': hodlContract.methods.deposit().encodeABI(),
         'value': web3.utils.toHex(web3.utils.toWei(amount, "ether"))
       };
-      await signTransaction(tx);
+      
+      const transactionReceipt = await signTheTransaction(tx);
+      console.log(transactionReceipt.blockNumber);
 }
 
 async function withdraw() {
-   const gasEstimate = await hodlContract.methods.withdraw().estimateGas();
    const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest'); 
+   //const gasEstimate = await hodlContract.methods.withdraw().estimateGas();
    const tx = {
       'from': PUBLIC_KEY,
       'to': contractAddress,
       'nonce': nonce,
-      'gas': gasEstimate, 
+      'gas': 8000000, 
       'maxFeePerGas': 80000000000,
       'data': hodlContract.methods.withdraw().encodeABI()
     };
-    await signTransaction(tx);
+    
+    const transactionReceipt = await signTheTransaction(tx); 
+    console.log(transactionReceipt);  
 }
 
 async function setTimeOfLock(time) {
    const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest'); 
-   const gasEstimate = await hodlContract.methods.deposit().estimateGas();
+   //const gasEstimate = await hodlContract.methods.deposit().estimateGas();
    const tx = {
       'from': PUBLIC_KEY,
       'to': contractAddress,
       'nonce': nonce,
-      'gas': gasEstimate, 
+      'gas': 8000000, 
       'maxFeePerGas': 80000000000,
       'data': hodlContract.methods.setTimeOfLock(time).encodeABI()
     };
-    await signTransaction(tx);
+    
+    const transactionReceipt = await signTheTransaction(tx); 
+    console.log(transactionReceipt);
 }
 
-async function signTransaction(tx) {
-  const signPromise = web3.eth.accounts.signTransaction(tx, PRIVATE_KEY);
-  signPromise.then((signedTx) => {
-    web3.eth.sendSignedTransaction(signedTx.rawTransaction, function(err, hash) {
-      if (!err) {
-        console.log("The hash of your transaction is: ", hash, "\n Check Alchemy's Mempool to view the status of your transaction!");
-      } else {
-        console.log("Something went wrong when submitting your transaction:", err)
-      }
-    });
-  }).catch((err) => {
-    console.log("Promise failed:", err);
-  });
-}
+async function signTheTransaction(tx) {
+  try{
+    const signedTx = await web3.eth.accounts.signTransaction(tx, PRIVATE_KEY);
+    const hash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+    return hash;
+  }
+  catch(err) {
+    return err;
+  }
+}  
+
+async function getEvent(hash, event) {
+  try{
+    var receipt = await web3.eth.getTransactionReceipt(hash);
+    const events = await hodlContract.getPastEvents(event, {fromBlock: receipt.blockNumber, toBlock: receipt.blockNumber});
+    console.log(events);
+  }
+  catch(err) {
+    console.log("Something went wrong");
+  }
+}  
 
 async function main() {
     
-    //await withdraw();
-    //await hodlContract.events.fundsWithdrawn;
+  await withdraw();
 
-    //const message = await hodlContract.methods.balance().call();
-    //console.log("Your balance is : " + message + " wei / " + (message/(10 ** 18)) + " ethereum");
+  //const message = await hodlContract.methods.balance().call();
+  //console.log("Your balance is : " + message + " wei / " + (message/(10 ** 18)) + " bnb");
 
-    //await deposit("1");
-    //const receipt = await hodlContract.methods.emitEvent();
-    //console.log(receipt.receipt);
+  //await deposit("0.01");
 
-    await setTimeOfLock("6000");
+  //await setTimeOfLock("3600");
 
-    //const message = await hodlContract.methods.timeOfUnlock().call();
-    //console.log("Your time of lock is : " + message);
+  //const message = await hodlContract.methods.timeOfUnlock().call();
+  //console.log("Your time of lock is : " + message);
 
-
-    //const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest'); // get latest nonce
-    //console.log(nonce);
+  //getEvent('0x486ecffa7e78b78b5414843258a0ed1d68465fd9fbb2d89c0b2daa8bf6ed1d39', 'fundsDeposited');
 }
 
 main();
