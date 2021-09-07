@@ -1,5 +1,5 @@
 require('dotenv').config();
-Web3 = require('web3')
+Web3 = require('web3');
 
 const API_URL = process.env.API_BSC_TESTNET;
 const PUBLIC_KEY = process.env.PUBLIC_KEY;
@@ -7,7 +7,6 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
 const web3 = new Web3(API_URL);
 
-const { resolveProperties } = require('@ethersproject/properties');
 const contract = require("../artifacts/contracts/Hodl.sol/Hodl.json");
 const contractAddress = "0x7d1DB53B7e4f31d7018edcFA7045fD68F58A5175";
 const hodlContract = new web3.eth.Contract(contract.abi, contractAddress);
@@ -75,10 +74,10 @@ async function main() {
     
     //await withdraw();
 
-    //const message = await hodlContract.methods.balance().call();
-    //console.log("Your balance is : " + message + " wei / " + (message/(10 ** 18)) + " ethereum");
+    const message = await hodlContract.methods.balance().call();
+    console.log("Your balance is : " + message + " wei / " + (message/(10 ** 18)) + " bnb");
 
-    await deposit("0.01");
+    //await deposit("0.01");
 
     //await setTimeOfLock("3600");
 
