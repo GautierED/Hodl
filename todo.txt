@@ -1,3 +1,2 @@
-- add a UI using metamask
-- let you lock erc20 token
-- optimize js file
+- let the user lock erc20 token
+- let user send tx from the frontend
