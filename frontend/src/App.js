@@ -27,8 +27,8 @@ function App() {
 
   const getTimeOfUnlock = async e => {
     e.preventDefault();
-    const time = await hodl.timeOfUnlock();
-    setTimeOfUnlock(time);
+    const timeOfUnlock = await hodl.timeOfUnlock();
+    setTimeOfUnlock(parseInt(timeOfUnlock._hex, 16));
   };
 
   const setTimeOfLock = async e => {
@@ -47,6 +47,12 @@ function App() {
     }
 
     const tx = await hodl.deposit(overrides);
+    await tx.wait();
+  };
+
+  const withdraw = async e => {
+    e.preventDefault();
+    const tx = await hodl.withdraw();
     await tx.wait();
   };
 
@@ -80,7 +86,7 @@ function App() {
 
         <div className='col-sm-6'>
           <h2>Time of unlock :</h2>
-          <p>{timeOfUnlock}</p>
+          <p>{timeOfUnlock }</p>
         </div>
 
         <div className='col-sm-6'>
@@ -119,6 +125,18 @@ function App() {
               className="form-control" 
               placeholder="Amount"
             />
+            <button 
+              type="submit" 
+              className="btn btn-primary"
+            >
+              Submit
+            </button>
+          </form>
+        </div>
+
+        <div className='col-sm-6'>
+          <h2>Withdraw</h2>
+          <form className="form-inline" onSubmit={e => withdraw(e)}>
             <button 
               type="submit" 
               className="btn btn-primary"
