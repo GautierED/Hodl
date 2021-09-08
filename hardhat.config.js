@@ -5,7 +5,7 @@
 require('dotenv').config();
 require("@nomiclabs/hardhat-ethers");
 
-const { API_URL, PRIVATE_KEY } = process.env;
+const { API_ROPSTEN, PRIVATE_KEY } = process.env;
 
 module.exports = {
    defaultNetwork: "mainnet",
@@ -28,7 +28,7 @@ module.exports = {
        accounts: [`0x${PRIVATE_KEY}`]
      },
      ropsten: {
-      url: API_URL,
+      url: API_ROPSTEN,
       accounts: [`0x${PRIVATE_KEY}`]
      }
    },
