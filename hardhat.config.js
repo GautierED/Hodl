@@ -5,10 +5,10 @@
 require('dotenv').config();
 require("@nomiclabs/hardhat-ethers");
 
-const { API_ROPSTEN, PRIVATE_KEY } = process.env;
+const { PRIVATE_KEY } = process.env;
 
 module.exports = {
-   defaultNetwork: "mainnet",
+   defaultNetwork: "testnet",
    networks: {
      localhost: {
        url: "http://127.0.0.1:8545"
@@ -26,10 +26,6 @@ module.exports = {
        chainId: 56,
        gasPrice: 20000000000,
        accounts: [`0x${PRIVATE_KEY}`]
-     },
-     ropsten: {
-      url: API_ROPSTEN,
-      accounts: [`0x${PRIVATE_KEY}`]
      }
    },
    solidity: {
