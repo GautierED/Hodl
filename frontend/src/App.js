@@ -18,11 +18,11 @@ function App() {
     const init = async () => {
       const provider = await detectEthereumProvider();
       if(provider) {
+        setMetamaskInstalled("true");
         const hodl = await loadBlockchainData();
         if(hodl){
           const balance = await hodl.balance();
           const timeOfUnlock = await hodl.timeOfUnlock();
-          setMetamaskInstalled("true");
           setHodl(hodl);
           setBalance(balance);
           setTimeOfUnlock(parseInt(timeOfUnlock._hex, 16));
@@ -87,6 +87,9 @@ function App() {
     const tx = await hodl.withdraw();
     await tx.wait();
   };
+
+  window.ethereum.on('chainChanged', (_chainId) => window.location.reload());
+  window.ethereum.on('accountsChanged', (_account) => window.location.reload());
 
   if(metamaskInstalled) {
 
