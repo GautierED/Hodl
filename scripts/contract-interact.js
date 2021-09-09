@@ -72,10 +72,10 @@ async function getEvent(hash, event) {
 
 async function main() {
     
-  await withdraw();
+  //await withdraw();
 
-  //const message = await hodlContract.methods.balance().call();
-  //console.log("Your balance is : " + message + " wei / " + (message/(10 ** 18)) + " bnb");
+  const message = await hodlContract.methods.balance().call();
+  console.log("Your balance is : " + (message/(10 ** 18)) + " bnb");
 
   //await deposit("0.01");
 
