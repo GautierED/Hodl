@@ -11,7 +11,7 @@ function App() {
   const [chainId, setChainId] = useState(undefined);
   const [hodl, setHodl] = useState(undefined);
   const [balance, setBalance] = useState(undefined);
-  const [timeOfUnlock, setTimeOfUnlock] = useState(undefined);
+  const [dateOfUnlock, setDateOfUnlock] = useState(undefined);
   const [metamaskInstalled, setMetamaskInstalled] = useState(undefined);
 
   useEffect(() => {
@@ -22,10 +22,11 @@ function App() {
         const hodl = await loadContractData();
         if(hodl){
           const balance = await hodl.balance();
-          const timeOfUnlock = await hodl.timeOfUnlock();
+          let timeOfUnlock = await hodl.timeOfUnlock();
+          var dateOfUnlock = new Date(parseInt(timeOfUnlock._hex, 16) *1000);
           setHodl(hodl);
           setBalance(balance);
-          setTimeOfUnlock(parseInt(timeOfUnlock._hex, 16));
+          setDateOfUnlock(dateOfUnlock.toLocaleString());
         }
       }
     };  
@@ -59,8 +60,9 @@ function App() {
 
   const getTimeOfUnlock = async e => {
     e.preventDefault();
-    const timeOfUnlock = await hodl.timeOfUnlock();
-    setTimeOfUnlock(parseInt(timeOfUnlock._hex, 16));
+    let timeOfUnlock = await hodl.timeOfUnlock();
+    var dateOfUnlock = new Date(parseInt(timeOfUnlock._hex, 16) *1000);
+    setDateOfUnlock(dateOfUnlock.toLocaleString());
   };
 
   const setTimeOfLock = async e => {
@@ -127,7 +129,7 @@ function App() {
 
             <div className='col-sm-6'>
               <h2>Time of unlock :</h2>
-              <p>{timeOfUnlock }</p>
+              <p>{dateOfUnlock }</p>
             </div>
 
             <div className='col-sm-6'>
