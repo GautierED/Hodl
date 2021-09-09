@@ -19,7 +19,7 @@ function App() {
       const provider = await detectEthereumProvider();
       if(provider) {
         setMetamaskInstalled("true");
-        const hodl = await loadBlockchainData();
+        const hodl = await loadContractData();
         if(hodl){
           const balance = await hodl.balance();
           const timeOfUnlock = await hodl.timeOfUnlock();
@@ -32,7 +32,7 @@ function App() {
     init();
   }, []);
 
-  async function loadBlockchainData() {
+  async function loadContractData() {
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     setAccount(accounts[0]);
     let provider = await detectEthereumProvider();
