@@ -13,16 +13,18 @@ function App() {
   const [balance, setBalance] = useState(undefined);
   const [dateOfUnlock, setDateOfUnlock] = useState(undefined);
   const [metamaskInstalled, setMetamaskInstalled] = useState(undefined);
+  const [lockPeriodDefined, setLockPeriodDefined] = useState(undefined);
 
   useEffect(() => {
     const init = async () => {
       const provider = await detectEthereumProvider();
       if(provider) {
-        setMetamaskInstalled("true");
+        setMetamaskInstalled(1);
         const hodl = await loadContractData();
         if(hodl){
           const balance = await hodl.balance();
           let timeOfUnlock = await hodl.timeOfUnlock();
+          if(parseInt(timeOfUnlock._hex, 16)){ setLockPeriodDefined(1); } else { setLockPeriodDefined(0); }
           var dateOfUnlock = new Date(parseInt(timeOfUnlock._hex, 16) *1000);
           setHodl(hodl);
           setBalance(balance);
@@ -93,6 +95,8 @@ function App() {
   window.ethereum.on('chainChanged', (_chainId) => window.location.reload());
   window.ethereum.on('accountsChanged', (_account) => window.location.reload());
 
+  console.log(lockPeriodDefined);
+
   if(metamaskInstalled) {
 
     if(!chainId){ 
@@ -100,99 +104,118 @@ function App() {
     }
 
     if (chainId === bscChainId){
-      return (
+      if (lockPeriodDefined) {
 
-        <div className='container'>
-          <div className='row'>
+        return (
 
-            <div className='col-sm-6'>
-              <h2>Account :</h2>
-              <p>{account}</p>
-            </div>
+          <div className='container'>
+            <div className='row'>
 
-            <div className='col-sm-6'>
-              <h2>Token locked :</h2>
-              <p>{(balance/(10 ** 18)).toString() + " BNB"}</p>
-            </div>
-
-            <div className='col-sm-6'>
-              <form className="form-inline" onSubmit={e => getBalance(e)}>
-                
-                <button 
-                  type="submit" 
-                  className="btn btn-primary"
-                >
-                  Refresh
-                </button>
-              </form>
-            </div>
-
-            <div className='col-sm-6'>
-              <h2>Time of unlock :</h2>
-              <p>{dateOfUnlock }</p>
-            </div>
-
-            <div className='col-sm-6'>
-              <form className="form-inline" onSubmit={e => getTimeOfUnlock(e)}>
-              <button 
-                  type="submit" 
-                  className="btn btn-primary"
-                >
-                  Refresh
-                </button>
-              </form>
+              <div className='col-sm-6'>
+                <h2>Account :</h2>
+                <p>{account}</p>
               </div>
 
-            <div className='col-sm-6'>
-              <h2>Set time of lock</h2>
-              <form className="form-inline" onSubmit={e => setTimeOfLock(e)}>
-                <input 
-                  type="text" 
-                  className="form-control" 
-                  placeholder="Time of lock"
-                />
-                <button 
-                  type="submit" 
-                  className="btn btn-primary"
-                >
-                  Submit
-                </button>
-              </form>
-            </div>
+              <div className='col-sm-6'>
+                <h2>Token locked :</h2>
+                <p>{(balance/(10 ** 18)).toString() + " BNB"}</p>
+              </div>
 
-            <div className='col-sm-6'>
-              <h2>Deposit</h2>
-              <form className="form-inline" onSubmit={e => deposit(e)}>
-                <input 
-                  type="text" 
-                  className="form-control" 
-                  placeholder="Amount"
-                />
-                <button 
-                  type="submit" 
-                  className="btn btn-primary"
-                >
-                  Submit
-                </button>
-              </form>
-            </div>
+              <div className='col-sm-6'>
+                <form className="form-inline" onSubmit={e => getBalance(e)}>
+                  
+                  <button 
+                    type="submit" 
+                    className="btn btn-primary"
+                  >
+                    Refresh
+                  </button>
+                </form>
+              </div>
 
-            <div className='col-sm-6'>
-              <h2>Withdraw</h2>
-              <form className="form-inline" onSubmit={e => withdraw(e)}>
-                <button 
-                  type="submit" 
-                  className="btn btn-primary"
-                >
-                  Submit
-                </button>
-              </form>
-            </div>
+              <div className='col-sm-6'>
+                <h2>Date of unlock :</h2>
+                <p>{dateOfUnlock}</p>
+              </div>
 
+              <div className='col-sm-6'>
+                <form className="form-inline" onSubmit={e => getTimeOfUnlock(e)}>
+                <button 
+                    type="submit" 
+                    className="btn btn-primary"
+                  >
+                    Refresh
+                  </button>
+                </form>
+              </div>
+
+              <div className='col-sm-6'>
+                <h2>Deposit</h2>
+                <form className="form-inline" onSubmit={e => deposit(e)}>
+                  <input 
+                    type="text" 
+                    className="form-control" 
+                    placeholder="Amount (BNB)"
+                  />
+                  <button 
+                    type="submit" 
+                    className="btn btn-primary"
+                  >
+                    Submit
+                  </button>
+                </form>
+              </div>
+
+              <div className='col-sm-6'>
+                <h2>Withdraw</h2>
+                <form className="form-inline" onSubmit={e => withdraw(e)}>
+                  <button 
+                    type="submit" 
+                    className="btn btn-primary"
+                  >
+                    Submit
+                  </button>
+                </form>
+              </div>
+
+            </div>
           </div>
-        </div>
+        );
 
-      );
+      } else {
+
+        return (
+
+          <div className='container'>
+            <div className='row'>
+
+              <div className='col-sm-6'>
+                <h2>Account :</h2>
+                <p>{account}</p>
+              </div>
+
+              <div className='col-sm-6'>
+                <h2>Set time of lock</h2>
+                <form className="form-inline" onSubmit={e => setTimeOfLock(e)}>
+                  <input 
+                    type="text" 
+                    className="form-control" 
+                    placeholder="Time (seconds)"
+                  />
+                  <button 
+                    type="submit" 
+                    className="btn btn-primary"
+                  >
+                    Submit
+                  </button>
+                </form>
+              </div>
+
+            </div>
+          </div>
+
+        );
+      }
     }
     else {
       return ('Switch network');
